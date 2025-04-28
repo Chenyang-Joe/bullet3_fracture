@@ -1,4 +1,5 @@
 #include "mydemo.h"
+#include <iostream>
 
 #include "btBulletDynamicsCommon.h"
 #define ARRAY_SIZE_Y 5
@@ -9,6 +10,33 @@
 #include "LinearMath/btAlignedObjectArray.h"
 
 #include "../CommonInterfaces/CommonRigidBodyBase.h"
+
+#include "../Importers/ImportObjDemo/ImportObjExample.h"
+
+// #include "../Importers/ImportObjDemo/ImportObjExample.h"
+// #include "../Importers/ImportMeshUtility/b3ImportMeshUtility.h"
+// #include "../Utils/b3BulletDefaultFileIO.h"
+// #include "../OpenGLWindow/GLInstanceGraphicsShape.h"
+
+// #include "myobjImporter/ImportObjExample.h"
+// #include <vector>
+// #include "../OpenGLWindow/GLInstancingRenderer.h"
+// #include "../ThirdPartyLibs/Wavefront/tiny_obj_loader.h"
+// #include "../OpenGLWindow/GLInstanceGraphicsShape.h"
+// #include "btBulletDynamicsCommon.h"
+// #include "../OpenGLWindow/SimpleOpenGL3App.h"
+// #include "myobjImporter/Wavefront2GLInstanceGraphicsShape.h"
+// #include "../Utils/b3ResourcePath.h"
+// #include "../Utils/b3BulletDefaultFileIO.h"
+// #include "Bullet3Common/b3FileUtils.h"
+
+// #include "../ThirdPartyLibs/stb_image/stb_image.h"
+
+// #include "../CommonInterfaces/CommonRigidBodyBase.h"
+// #include "../Importers/ImportMeshUtility/b3ImportMeshUtility.h"
+
+
+
 
 struct myExample : public CommonRigidBodyBase
 {
@@ -28,6 +56,41 @@ struct myExample : public CommonRigidBodyBase
 		m_guiHelper->resetCamera(dist, yaw, pitch, targetPos[0], targetPos[1], targetPos[2]);
 	}
 };
+
+
+// int myloadAndRegisterMeshFromFile(const std::string& fileName, CommonRenderInterface* renderer)
+// {
+// 	int shapeId = -1;
+
+// 	b3ImportMeshData meshData;
+// 	b3BulletDefaultFileIO fileIO;
+// 	if (b3ImportMeshUtility::loadAndRegisterMeshFromFileInternal(fileName, meshData,&fileIO))
+// 	{
+// 		int textureIndex = -1;
+
+// 		if (meshData.m_textureImage1)
+// 		{
+// 			textureIndex = renderer->registerTexture(meshData.m_textureImage1, meshData.m_textureWidth, meshData.m_textureHeight);
+// 		}
+
+// 		shapeId = renderer->registerShape(&meshData.m_gfxShape->m_vertices->at(0).xyzw[0],
+// 										  meshData.m_gfxShape->m_numvertices,
+// 										  &meshData.m_gfxShape->m_indices->at(0),
+// 										  meshData.m_gfxShape->m_numIndices,
+// 										  B3_GL_TRIANGLES,
+// 										  textureIndex);
+// 		delete meshData.m_gfxShape;
+// 		if (!meshData.m_isCached)
+// 		{
+// 			delete meshData.m_textureImage1;
+// 		}
+// 	}
+// 	return shapeId;
+// }
+
+
+
+
 
 void myExample::initPhysics()
 {
@@ -94,6 +157,58 @@ void myExample::initPhysics()
 				}
 			}
 		}
+	}
+
+    // import a bullet
+    // btBulletWorldImporter* importer = new btBulletWorldImporter(m_dynamicsWorld);
+    // const char* prefix[] = {"", "./", "./data/", "../data/", "../../data/", "../../../data/", "../../../../data/"};
+	// int numPrefixes = sizeof(prefix) / sizeof(const char*);
+	// char relativeFileName[1024];
+	// FILE* f = 0;
+
+    // const char* fileName = "/Users/chenyangxu/Codebase/AI4CE/assembly2025spring/bullet/bullet3_fracture/examples/mydemo/Core2.obj";
+    // char m_fileName[1024];
+    // memcpy(m_fileName, fileName, strlen(fileName) + 1);
+
+
+	// for (int i = 0; !f && i < numPrefixes; i++)
+	// {
+	// 	sprintf(relativeFileName, "%s%s", prefix[i], m_fileName);
+	// 	f = fopen(relativeFileName, "rb");
+	// 	if (f)
+	// 	{
+    //         std::cout << "file detected" << std::endl;
+	// 		break;
+	// 	}
+	// }
+	// if (f)
+	// {
+	// 	fclose(f);
+	// }
+
+	// importer->loadFile(relativeFileName);
+
+    // import a obj
+
+
+    btTransform trans;
+    // const char* m_fileName = "mydata/Core2.obj";
+	// const char* m_fileName = "mydata/cube.obj";
+	const char* m_fileName = "cube.obj";
+	trans.setIdentity();
+	trans.setRotation(btQuaternion(btVector3(1, 0, 0), SIMD_HALF_PI));
+	btVector3 position = trans.getOrigin();
+	btQuaternion orn = trans.getRotation();
+
+	btVector3 scaling(1, 1, 1);
+	btVector4 color(1, 1, 1,1);
+
+	int shapeId = loadAndRegisterMeshFromFile2(m_fileName, m_guiHelper->getRenderInterface());
+
+	if (shapeId >= 0)
+	{
+		//int id =
+		m_guiHelper->getRenderInterface()->registerGraphicsInstance(shapeId, position, orn, color, scaling);
 	}
 
 	m_guiHelper->autogenerateGraphicsObjects(m_dynamicsWorld);

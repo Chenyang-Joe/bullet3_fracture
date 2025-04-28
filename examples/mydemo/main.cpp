@@ -13,7 +13,6 @@ int main(int argc, char* argv[])
 
 	CommonExampleOptions options(&noGfx);
 	CommonExampleInterface* example = myCreateFunc(options);
-
 	example->initPhysics();
 	example->stepSimulation(1.f / 60.f);
 	example->exitPhysics();
